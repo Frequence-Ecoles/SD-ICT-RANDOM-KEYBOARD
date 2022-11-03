@@ -1,9 +1,17 @@
-var wordCount = 0;
+let randomizeEnabled = false;
 
+var wordCount = 0;
+let victoryText1 = 'Bravo ! Tu as réussi à écrire <br> <span> "un chien mange une pomme bien rouge" </span> en seulement <span> ';
+let victoryText2 = "</span> alors que le clavier était mélangé. <br> <br> À ton avis, pourquoi c'était si compliqué ?";
 // timer target
 const timer = document.getElementById('timer');
 var time = 0;
 var timerActive = false;
+let victoryTriggered = false;
+let timerCounting;
+
+// fullscreen
+var fullscreenAvailable = true;
 
 // sentence to write
 const sentenceArray = [
@@ -16,6 +24,11 @@ const sentenceArray = [
   "rouge"
 
 ]
+
+// definitions of victory objects
+let winContainer = document.getElementById('win-container');
+var winH1 = document.getElementById('win-h1');
+
 
 //target inputField
 const inputField = document.getElementById('inputField');
@@ -233,7 +246,10 @@ const Keyboard = {
 
                 obj.close();
                 obj._triggerEvent("onclose");
-                keyBoardRandomized = true;
+                if (randomizeEnabled) {
+                  keyBoardRandomized = true;
+
+                }
 
                 Keyboard.init();
                 Keyboard.open();
@@ -242,11 +258,16 @@ const Keyboard = {
               }
 
               if (wordCount >= sentenceArray.length) {
-                var winH1 = document.getElementById('win-h1');
-                winH1.style.display = "block";
-                winH1.innerHTML = "Bravo ! Tu as réussi à écrire 'un chien mange une pomme bien rouge' en seulement " + Math.round(time / 1000) + " secondes !"
+                obj.close();
+                inputField.style.display = "none";
+                victoryTriggered = true;
+                clearInterval(timerCounting);
+                winContainer.style.display = "flex";
+                winH1.innerHTML = victoryText1 + Math.round(time / 1000) + ' secondes,' + victoryText2;
                 console.log('WIN WIN WIN');
               }
+
+
 
             }
 
@@ -354,8 +375,9 @@ const Keyboard = {
     this.elements.main.classList.remove("keyboard--hidden");
 
     if (timerActive == false) {
+      timer.style.padding = "1rem";
       timerActive = true;
-      var timerCounting = setInterval(function() {
+       timerCounting = setInterval(function() {
         time += 100;
         timer.innerHTML = "Temps : " + Math.round(time / 1000) + "s";
       }, 100);
@@ -400,3 +422,65 @@ function confirmInput() {
 }
 
 // confirmInput();
+
+
+const refreshAll = () => {
+
+  targetField.innerHTML = sentenceArray[0];
+  wordCount = 0;
+
+  timer.style.padding = "0";
+  timerActive = false;
+  time = 0;
+  timer.innerHTML = null;
+
+  inputField.style.display = "block";
+  inputField.blur();
+  inputField.value = '';
+  inputField.placeholder = "Écris ici le texte affiché au-dessus !";
+
+  Keyboard.close();
+  Keyboard._triggerEvent("onclose");
+  keyBoardRandomized = false;
+
+  Keyboard.init();
+  clearInterval(timerCounting);
+
+  winContainer.style.display = "none";
+}
+
+var elem = document.body;
+document.addEventListener('click', function() {
+  if (fullscreenAvailable) {
+    requestFullScreen(elem);
+    fullscreenAvailable = false;
+  }
+})
+
+function requestFullScreen(element) {
+
+  // Supports most browsers and their versions.
+  var requestMethod = element.requestFullScreen || element.webkitRequestFullScreen || element.mozRequestFullScreen || element.msRequestFullScreen;
+
+  if (requestMethod) { // Native full screen.
+    requestMethod.call(element);
+  } else if (typeof window.ActiveXObject !== "undefined") { // Older IE.
+    var wscript = new ActiveXObject("WScript.Shell");
+    if (wscript !== null) {
+      wscript.SendKeys("{F11}");
+    }
+  }
+}
+
+function closeFullscreen() {
+
+  if (document.exitFullscreen) {
+    document.exitFullscreen();
+  } else if (document.webkitExitFullscreen) {
+    /* Safari */
+    document.webkitExitFullscreen();
+  } else if (document.msExitFullscreen) {
+    /* IE11 */
+    document.msExitFullscreen();
+  }
+}
