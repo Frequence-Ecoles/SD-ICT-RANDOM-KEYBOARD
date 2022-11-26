@@ -1,4 +1,4 @@
-let randomizeEnabled = false;
+let randomizeEnabled = true;
 
 var wordCount = 0;
 let victoryText1 = 'Bravo ! Tu as réussi à écrire <br> <span> "un chien mange une pomme bien rouge" </span> en seulement <span> ';
