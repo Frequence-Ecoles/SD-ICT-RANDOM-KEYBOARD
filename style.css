@@ -40,8 +40,8 @@ textarea {
   resize: none;
 
   text-align: center;
-  height: 6rem !important;
-  line-height: 6rem;
+  height: 4rem !important;
+  line-height: 4rem;
   width: 30rem;
   background: none;
   border: solid 5px var(--sd-red);
@@ -67,7 +67,8 @@ textarea {
   font-family: sans-serif;
   color: var(--sd-red);
   font-family: var(--type);
-  margin: 2rem;
+  margin: 1rem;
+  margin-top: 0;
   padding: 1rem;
 }
 
